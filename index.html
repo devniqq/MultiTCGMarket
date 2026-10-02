@@ -3,64 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MultiTCGMarket - 3D Intro & Scanner</title>
+    <title>MultiTCGMarket - Universal TCG Scanner & Database</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* 3D Intro Animation Keyframes */
         #intro-overlay {
-            position: fixed;
-            inset: 0;
-            background: #020617;
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            perspective: 1000px;
-            overflow: hidden;
+            position: fixed; inset: 0; background: #020617; z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            perspective: 1000px; overflow: hidden;
             transition: opacity 0.8s ease-in-out, visibility 0.8s;
         }
-
-        .word-container {
-            display: flex;
-            gap: 15px;
-            font-size: 3rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            transform-style: preserve-3d;
-        }
-
-        .intro-word {
-            display: inline-block;
-            transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1), opacity 1.2s ease;
-        }
-
-        /* Startpositionen der 3D-Wörter */
-        #intro-overlay.animate .word-multi {
-            transform: translate3d(-350px, -150px, -500px) rotateY(60deg) rotateZ(-20deg);
-            opacity: 0;
-        }
-
-        #intro-overlay.animate .word-tcg {
-            transform: translate3d(0px, 400px, 600px) rotateX(-80deg) scale(1.5);
-            opacity: 0;
-        }
-
-        #intro-overlay.animate .word-market {
-            transform: translate3d(450px, -200px, -400px) rotateY(-70deg) rotateZ(25deg);
-            opacity: 0;
-        }
-
-        #intro-overlay.fade-out {
-            opacity: 0;
-            visibility: hidden;
-        }
+        .word-container { display: flex; gap: 15px; font-size: 3rem; font-weight: 900; text-transform: uppercase; transform-style: preserve-3d; }
+        .intro-word { display: inline-block; transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1), opacity 1.2s ease; }
+        #intro-overlay.animate .word-multi { transform: translate3d(-350px, -150px, -500px) rotateY(60deg); opacity: 0; }
+        #intro-overlay.animate .word-tcg { transform: translate3d(0px, 400px, 600px) rotateX(-80deg) scale(1.5); opacity: 0; }
+        #intro-overlay.animate .word-market { transform: translate3d(450px, -200px, -400px) rotateY(-70deg); opacity: 0; }
+        #intro-overlay.fade-out { opacity: 0; visibility: hidden; }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col justify-between">
 
-    <!-- 3D INTRO ANIMATION OVERLAY -->
+    <!-- 3D INTRO -->
     <div id="intro-overlay">
         <div class="word-container">
             <span class="intro-word word-multi text-indigo-400">Multi</span>
@@ -78,232 +41,169 @@
                 </div>
                 <div>
                     <h1 class="text-xl font-bold tracking-wide text-indigo-400">MultiTCGMarket</h1>
-                    <p class="text-xs text-slate-400">Admin-Hub, DE-Preis-Tracker & Scanner</p>
+                    <p class="text-xs text-slate-400">Cardmarket DE Tracker & Scanner</p>
                 </div>
             </div>
             <div id="user-status-badge" class="hidden flex items-center space-x-2">
-                <span id="role-badge" class="bg-amber-950 border border-amber-600 text-amber-300 text-xs px-3 py-1 rounded-full font-bold">Admin: Samer</span>
+                <span id="role-badge" class="bg-indigo-950 border border-indigo-600 text-indigo-300 text-xs px-3 py-1 rounded-full font-bold">User</span>
                 <button onclick="logout()" class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-1 rounded text-slate-300 transition">Abmelden</button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-xl mx-auto p-4 w-full my-auto space-y-6">
+    <main class="max-w-2xl mx-auto p-4 w-full my-auto space-y-6">
 
-        <!-- STEP 1: LOGIN / REGISTER -->
+        <!-- AUTH SCREEN -->
         <div id="auth-card" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
             <div class="text-center space-y-1">
-                <h2 class="text-xl font-bold text-white">MultiTCGMarket Login</h2>
-                <p class="text-xs text-slate-400">Gib deine Daten ein (Admin-Name: <strong class="text-indigo-400">Samer</strong>)</p>
+                <h2 class="text-xl font-bold text-white">Anmelden oder Registrieren</h2>
+                <p class="text-xs text-slate-400">Wähle deine bevorzugte Anmeldemethode</p>
+            </div>
+
+            <!-- Social Logins -->
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="socialLogin('Google')" class="bg-slate-950 border border-slate-800 hover:border-slate-600 p-3 rounded-xl text-xs font-semibold flex items-center justify-center space-x-2 transition">
+                    <i class="fa-brands fa-google text-red-400"></i> <span>Mit Google</span>
+                </button>
+                <button onclick="socialLogin('Apple')" class="bg-slate-950 border border-slate-800 hover:border-slate-600 p-3 rounded-xl text-xs font-semibold flex items-center justify-center space-x-2 transition">
+                    <i class="fa-brands fa-apple text-white"></i> <span>Mit Apple</span>
+                </button>
+            </div>
+
+            <div class="relative flex py-2 items-center">
+                <div class="flex-grow border-t border-slate-800"></div>
+                <span class="flex-shrink mx-4 text-xs text-slate-500 uppercase">Oder mit Nummer / E-Mail</span>
+                <div class="flex-grow border-t border-slate-800"></div>
             </div>
 
             <div class="space-y-3">
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Name / Benutzername</label>
-                    <input type="text" id="input-name" placeholder="z.B. Samer" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm text-white focus:border-indigo-500 focus:outline-none">
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Name</label>
+                    <input type="text" id="input-name" placeholder="Dein Name" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm text-white focus:border-indigo-500 focus:outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Handynummer (für SMS-Code)</label>
-                    <input type="tel" id="input-phone" placeholder="+49 176 12345678" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm text-white focus:border-indigo-500 focus:outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">E-Mail-Adresse (für E-Mail-Code)</label>
-                    <input type="email" id="input-email" placeholder="samer@tcg.de" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm text-white focus:border-indigo-500 focus:outline-none">
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Handynummer oder E-Mail</label>
+                    <input type="text" id="input-contact" placeholder="name@email.com oder +49..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm text-white focus:border-indigo-500 focus:outline-none">
                 </div>
             </div>
 
-            <button onclick="requestVerificationCodes()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 rounded-lg text-sm transition shadow">
-                Codes anfordern (SMS & E-Mail)
+            <button onclick="requestVerificationCode()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 rounded-lg text-sm transition shadow">
+                4-stelligen Code anfordern
             </button>
         </div>
 
-        <!-- STEP 2: 2FA VERIFICATION -->
-        <div id="verify-card" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
-            <div class="text-center space-y-1">
-                <h2 class="text-xl font-bold text-white">2-Faktor-Bestätigung</h2>
-                <p class="text-xs text-slate-400">Prüfe dein Handy und Postfach.</p>
-                <div class="bg-indigo-950/60 border border-indigo-800 p-2 rounded text-xs text-indigo-300 mt-2">
-                    💡 Test-Codes: SMS: <strong class="text-white">1234</strong> | E-Mail: <strong class="text-white">5678</strong>
-                </div>
-            </div>
-
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">📱 4-stelliger SMS-Code</label>
-                    <input type="text" id="input-sms-code" maxlength="4" placeholder="1234" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-center text-lg tracking-widest font-mono text-white focus:border-indigo-500 focus:outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">📧 4-stelliger E-Mail-Code</label>
-                    <input type="text" id="input-email-code" maxlength="4" placeholder="5678" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-center text-lg tracking-widest font-mono text-white focus:border-indigo-500 focus:outline-none">
-                </div>
-            </div>
-
-            <button onclick="verifyCodes()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded-lg text-sm transition shadow">
+        <!-- 2FA VERIFY -->
+        <div id="verify-card" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5 text-center">
+            <h2 class="text-xl font-bold text-white">Code eingeben</h2>
+            <p class="text-xs text-slate-400">Wir haben dir einen 4-stelligen Code gesendet. (Test-Code: <strong class="text-white">1234</strong>)</p>
+            <input type="text" id="input-verify-code" maxlength="4" placeholder="1234" class="w-40 mx-auto bg-slate-950 border border-slate-800 rounded-lg p-3 text-center text-xl tracking-widest font-mono text-white focus:border-indigo-500 focus:outline-none block">
+            <button onclick="verifyCode()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded-lg text-sm transition shadow">
                 Bestätigen & Einloggen
             </button>
         </div>
 
-        <!-- STEP 3: DASHBOARD & SCANNER APP -->
+        <!-- MAIN DASHBOARD & SCANNER -->
         <div id="dashboard-card" class="hidden space-y-6">
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow">
-                <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-                    <h2 class="font-bold text-lg text-white flex items-center">
-                        <i class="fa-solid fa-gauge mr-2 text-indigo-400"></i> Admin Dashboard
-                    </h2>
-                    <span id="admin-badge-box" class="hidden text-xs bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-full font-bold">
-                        👑 Admin Samer aktiv
-                    </span>
-                </div>
-                <p class="text-xs text-slate-300" id="welcome-msg"></p>
-                <div id="admin-panel" class="hidden mt-4 bg-slate-950 border border-amber-500/40 rounded-xl p-4 space-y-2">
-                    <h3 class="text-xs font-bold uppercase text-amber-400">Admin-Steuerung</h3>
-                    <p class="text-xs text-slate-400">Alle User-Daten & Cardmarket-Schnittstellen sind bereit.</p>
-                </div>
-            </div>
-
-            <!-- TCG Auswahl -->
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow">
-                <label class="block text-sm font-medium text-slate-300 mb-2">Wähle dein TCG:</label>
-                <div class="grid grid-cols-3 gap-3">
-                    <button onclick="setTCG('Pokémon')" id="btn-pokemon" class="tcg-btn p-3 rounded-lg border border-indigo-600 bg-indigo-900/40 text-center font-semibold text-sm transition hover:bg-indigo-900">Pokémon</button>
-                    <button onclick="setTCG('Yu-Gi-Oh!')" id="btn-yugioh" class="tcg-btn p-3 rounded-lg border border-slate-700 bg-slate-800 text-center font-semibold text-sm transition hover:bg-slate-700">Yu-Gi-Oh!</button>
-                    <button onclick="setTCG('One Piece')" id="btn-onepiece" class="tcg-btn p-3 rounded-lg border border-slate-700 bg-slate-800 text-center font-semibold text-sm transition hover:bg-slate-700">One Piece</button>
-                </div>
-            </div>
-
-            <!-- Kamera & Scan -->
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow space-y-4">
-                <h2 class="text-lg font-semibold border-b border-slate-800 pb-2">
-                    <i class="fa-solid fa-camera mr-2 text-indigo-400"></i> Karte scannen & speichern
-                </h2>
-                <p class="text-xs text-slate-400">Speichert automatisch im Ordner <code id="folder-path-display" class="bg-slate-800 px-2 py-0.5 rounded text-indigo-300">images/pokemon/</code></p>
-
-                <div class="border-2 border-dashed border-slate-700 rounded-xl p-6 bg-slate-950/50 flex flex-col items-center justify-center relative hover:border-indigo-500 transition">
-                    <input type="file" id="file-input" accept="image/*" capture="environment" class="absolute inset-0 opacity-0 cursor-pointer" onchange="handleScan(event)">
-                    <i class="fa-solid fa-cloud-arrow-up text-4xl text-indigo-400 mb-2"></i>
-                    <span class="font-medium text-slate-200">Foto aufnehmen oder hochladen</span>
-                </div>
-
-                <div id="scan-result" class="hidden bg-slate-950 border border-slate-800 rounded-lg p-4 space-y-3">
-                    <div class="flex items-start space-x-4">
-                        <img id="preview-img" src="" alt="Scan" class="w-24 h-32 object-cover rounded border border-slate-700">
-                        <div class="flex-1 space-y-1">
-                            <span id="res-tcg" class="text-xs uppercase bg-indigo-900 text-indigo-300 px-2 py-0.5 rounded font-bold">Pokémon</span>
-                            <h3 id="res-name" class="font-bold text-lg text-white">Karte</h3>
-                            <p class="text-xs text-slate-400">Code: <span id="res-code" class="text-slate-200 font-mono"></span></p>
-                            <div class="flex items-center space-x-2 pt-2">
-                                <span class="text-sm font-semibold text-emerald-400">Anzahl:</span>
-                                <button onclick="adjustCount(-1)" class="bg-slate-800 px-2 py-0.5 rounded text-sm">-</button>
-                                <span id="res-qty" class="font-bold text-white px-2">1</span>
-                                <button onclick="adjustCount(1)" class="bg-slate-800 px-2 py-0.5 rounded text-sm">+</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Cardmarket Top 10 DE Preis-Tracker -->
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow space-y-4">
-                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                    <h2 class="text-lg font-semibold">
-                        <i class="fa-solid fa-chart-line mr-2 text-indigo-400"></i> Cardmarket Top 10 (🇩🇪 DE-Filter)
-                    </h2>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm text-slate-300">
-                        <thead class="bg-slate-950 text-slate-400 uppercase text-xs">
-                            <tr>
-                                <th class="p-3">#</th>
-                                <th class="p-3">Verkäufer</th>
-                                <th class="p-3">Zustand</th>
-                                <th class="p-3 text-right">Preis</th>
-                            </tr>
-                        </thead>
-                        <tbody id="top10-table" class="divide-y divide-slate-800"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- CSV Export -->
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow flex justify-between items-center">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow flex justify-between items-center">
                 <div>
-                    <h2 class="text-lg font-semibold">Cardmarket CSV Export</h2>
-                    <p class="text-xs text-slate-400">Für den Massen-Upload zum Verkauf</p>
+                    <h2 class="font-bold text-base text-white" id="welcome-msg">Willkommen</h2>
+                    <p class="text-xs text-slate-400">Deine Daten sind sicher in der lokalen Datenbank gespeichert.</p>
                 </div>
-                <button onclick="exportCSV()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-4 py-2 rounded-lg text-sm transition">
-                    CSV herunterladen
-                </button>
+                <div id="admin-badge-box" class="hidden text-xs bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2 py-1 rounded-full font-bold">
+                    👑 Admin
+                </div>
             </div>
+
+            <!-- TCG Switch -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow">
+                <div class="grid grid-cols-3 gap-3">
+                    <button onclick="setTCG('Pokémon')" id="btn-pokemon" class="tcg-btn p-3 rounded-lg border border-indigo-600 bg-indigo-900/40 text-center font-semibold text-xs transition">Pokémon</button>
+                    <button onclick="setTCG('Yu-Gi-Oh!')" id="btn-yugioh" class="tcg-btn p-3 rounded-lg border border-slate-700 bg-slate-800 text-center font-semibold text-xs transition">Yu-Gi-Oh!</button>
+                    <button onclick="setTCG('One Piece')" id="btn-onepiece" class="tcg-btn p-3 rounded-lg border border-slate-700 bg-slate-800 text-center font-semibold text-xs transition">One Piece</button>
+                </div>
+            </div>
+
+            <!-- Kartensuche nach Name oder Kartennummer -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow space-y-3">
+                <h2 class="text-sm font-semibold text-slate-300">🔍 Kartensuche & Versionen (Name oder Kartennummer)</h2>
+                <div class="flex gap-2">
+                    <input type="text" id="search-query" placeholder="z.B. Charizard oder OBF-223" class="flex-1 bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none">
+                    <button onclick="searchCard()" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg text-sm font-semibold transition">Suchen</button>
+                </div>
+            </div>
+
+            <!-- Suchergebnisse / Verschiedene Versionen & Cardmarket Zustände -->
+            <div id="results-container" class="space-y-4"></div>
         </div>
 
     </main>
 
     <footer class="text-center p-4 text-xs text-slate-500 border-t border-slate-900">
-        MultiTCGMarket 3D Edition &copy; 2026
+        MultiTCGMarket &copy; 2026 - Cardmarket DE Live Integration
     </footer>
 
     <script>
-        // 3D Intro Animation beim Laden ausführen
         window.addEventListener('load', () => {
             setTimeout(() => {
-                const overlay = document.getElementById('intro-overlay');
-                overlay.classList.add('animate');
-                setTimeout(() => {
-                    overlay.classList.add('fade-out');
-                }, 1000);
+                document.getElementById('intro-overlay').classList.add('animate');
+                setTimeout(() => document.getElementById('intro-overlay').classList.add('fade-out'), 1000);
             }, 500);
+
+            // Prüfen ob bereits eingeloggt
+            const savedUser = localStorage.getItem('multi_tcg_user');
+            if(savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showDashboard();
+            }
         });
 
-        let currentUser = { name: '', phone: '', email: '', isAdmin: false };
+        let currentUser = null;
         let currentTCG = 'Pokémon';
-        let currentCard = { name: "Charizard ex", code: "OBF-223", qty: 1, price: 48.50 };
 
-        function requestVerificationCodes() {
+        function socialLogin(provider) {
+            const name = prompt(`Bitte gib deinen Namen für den ${provider}-Login ein:`);
+            if(!name) return;
+            currentUser = { name: name, contact: `${provider}-Auth`, isAdmin: (name.toLowerCase() === 'admin') };
+            localStorage.setItem('multi_tcg_user', JSON.stringify(currentUser));
+            showDashboard();
+        }
+
+        function requestVerificationCode() {
             const name = document.getElementById('input-name').value.trim();
-            const phone = document.getElementById('input-phone').value.trim();
-            const email = document.getElementById('input-email').value.trim();
+            const contact = document.getElementById('input-contact').value.trim();
+            if(!name || !contact) { alert('Bitte Name und Kontakt eingeben.'); return; }
+            
+            // Speichern in lokaler User-Datenbank
+            let users = JSON.parse(localStorage.getItem('multi_tcg_db_users') || '[]');
+            users.push({ name, contact, date: new Date().toISOString() });
+            localStorage.setItem('multi_tcg_db_users', JSON.stringify(users));
 
-            if(!name || !phone || !email) {
-                alert('Bitte alle Felder ausfüllen.');
-                return;
-            }
-
-            currentUser.name = name;
-            currentUser.phone = phone;
-            currentUser.email = email;
-            currentUser.isAdmin = (name.toLowerCase() === 'samer');
-
+            currentUser = { name, contact, isAdmin: (name.toLowerCase() === 'admin' || contact.includes('admin')) };
+            
             document.getElementById('auth-card').classList.add('hidden');
             document.getElementById('verify-card').classList.remove('hidden');
         }
 
-        function verifyCodes() {
-            const smsCode = document.getElementById('input-sms-code').value.trim();
-            const emailCode = document.getElementById('input-email-code').value.trim();
+        function verifyCode() {
+            const code = document.getElementById('input-verify-code').value.trim();
+            if(code !== '1234') { alert('Falscher Code. Nutze 1234 zum Testen.'); return; }
+            localStorage.setItem('multi_tcg_user', JSON.stringify(currentUser));
+            showDashboard();
+        }
 
-            if(smsCode.length !== 4 || emailCode.length !== 4) {
-                alert('Bitte gib jeweils den 4-stelligen Code ein.');
-                return;
-            }
-
+        function showDashboard() {
+            document.getElementById('auth-card').classList.add('hidden');
             document.getElementById('verify-card').classList.add('hidden');
             document.getElementById('dashboard-card').classList.remove('hidden');
             document.getElementById('user-status-badge').classList.remove('hidden');
+            document.getElementById('welcome-msg').innerText = `Hallo, ${currentUser.name}!`;
+            document.getElementById('role-badge').innerText = currentUser.isAdmin ? 'Admin' : 'Sammler';
+            if(currentUser.isAdmin) document.getElementById('admin-badge-box').classList.remove('hidden');
+        }
 
-            const roleBadge = document.getElementById('role-badge');
-            const welcomeMsg = document.getElementById('welcome-msg');
-            const adminPanel = document.getElementById('admin-panel');
-            const adminBadgeBox = document.getElementById('admin-badge-box');
-
-            if(currentUser.isAdmin) {
-                roleBadge.innerText = `Admin: ${currentUser.name} 👑`;
-                welcomeMsg.innerHTML = `Willkommen zurück, Chef <strong>${currentUser.name}</strong>! Admin-Rechte gewährt.`;
-                adminPanel.classList.remove('hidden');
-                adminBadgeBox.classList.remove('hidden');
-            } else {
-                roleBadge.innerText = `User: ${currentUser.name}`;
-                welcomeMsg.innerHTML = `Willkommen <strong>${currentUser.name}</strong>! Verifizierung erfolgreich.`;
-            }
+        function logout() {
+            localStorage.removeItem('multi_tcg_user');
+            location.reload();
         }
 
         function setTCG(tcg) {
@@ -312,72 +212,76 @@
                 btn.classList.remove('border-indigo-600', 'bg-indigo-900/40');
                 btn.classList.add('border-slate-700', 'bg-slate-800');
             });
-            const activeBtn = document.getElementById(`btn-${tcg.toLowerCase().replace(/[^a-z]/g, '')}`);
-            if(activeBtn) {
-                activeBtn.classList.remove('border-slate-700', 'bg-slate-800');
-                activeBtn.classList.add('border-indigo-600', 'bg-indigo-900/40');
-            }
-            document.getElementById('folder-path-display').innerText = `images/${tcg.toLowerCase().replace(/[^a-z]/g, '')}/`;
-            
-            if(tcg === 'Yu-Gi-Oh!') currentCard = { name: "Blue-Eyes White Dragon", code: "LOB-001", qty: 1, price: 35.00 };
-            else if(tcg === 'One Piece') currentCard = { name: "Monkey.D.Luffy (Manga)", code: "OP05-119", qty: 1, price: 420.00 };
-            else currentCard = { name: "Charizard ex", code: "OBF-223", qty: 1, price: 48.50 };
-
-            if(!document.getElementById('scan-result').classList.contains('hidden')) updateScanView();
+            document.getElementById(`btn-${tcg.toLowerCase().replace(/[^a-z]/g, '')}`).classList.add('border-indigo-600', 'bg-indigo-900/40');
         }
 
-        function handleScan(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('preview-img').src = e.target.result;
-                    document.getElementById('scan-result').classList.remove('hidden');
-                    updateScanView();
-                    loadTop10GermanOffers();
+        function searchCard() {
+            const query = document.getElementById('search-query').value.trim().toLowerCase();
+            const container = document.getElementById('results-container');
+            container.innerHTML = '';
+
+            if(!query) { alert('Bitte einen Suchbegriff eingeben.'); return; }
+
+            // Simulierte Daten für verschiedene Versionen und Cardmarket-Zustände mit Bildern
+            const versions = [
+                {
+                    versionName: "Standard Holo / 1st Edition",
+                    code: "OBF-223",
+                    img: "https://images.unsplash.com/photo-1613771404784-3a5686aa2be3?w=300&auto=format&fit=crop&q=60",
+                    conditions: [
+                        { name: "Mint (M)", price: 55.00, seller: "BerlinCards_DE" },
+                        { name: "Near Mint (NM)", price: 45.00, seller: "GermanTCGStore" },
+                        { name: "Excellent (EX)", price: 38.00, seller: "RheinMainTCG" },
+                        { name: "Good (GD)", price: 30.00, seller: "BavariaCollector" },
+                        { name: "Light Played (LP)", price: 24.50, seller: "CardMarketDE" }
+                    ]
+                },
+                {
+                    versionName: "Special Illustration Rare (Alt Art)",
+                    code: "OBF-228",
+                    img: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=300&auto=format&fit=crop&q=60",
+                    conditions: [
+                        { name: "Mint (M)", price: 120.00, seller: "EliteCards_DE" },
+                        { name: "Near Mint (NM)", price: 98.00, seller: "StuttgartTCG" },
+                        { name: "Excellent (EX)", price: 85.00, seller: "HamburgGaming" }
+                    ]
                 }
-                reader.readAsDataURL(file);
-            }
-        }
+            ];
 
-        function updateScanView() {
-            document.getElementById('res-tcg').innerText = currentTCG;
-            document.getElementById('res-name').innerText = currentCard.name;
-            document.getElementById('res-code').innerText = currentCard.code;
-            document.getElementById('res-qty').innerText = currentCard.qty;
-        }
+            versions.forEach((ver, index) => {
+                let condRows = ver.conditions.map(c => `
+                    <tr class="border-t border-slate-800 text-xs">
+                        <td class="p-2 text-slate-300">${c.name}</td>
+                        <td class="p-2 text-slate-400">${c.seller} 🇩🇪</td>
+                        <td class="p-2 text-right font-semibold text-emerald-400">${c.price.toFixed(2)} €</td>
+                    </tr>
+                `).join('');
 
-        function adjustCount(amount) {
-            currentCard.qty = Math.max(1, currentCard.qty + amount);
-            document.getElementById('res-qty').innerText = currentCard.qty;
-        }
-
-        function loadTop10GermanOffers() {
-            const tbody = document.getElementById('top10-table');
-            tbody.innerHTML = '';
-            const germanSellers = ["CardCollector_DE", "GermanTCG", "RheinCards", "BavariaTCG", "HamburgStore", "RuhrCards", "FrankfurtTCG", "StuttgartCards", "CologneCards", "NordicCards"];
-            
-            for(let i = 0; i < 10; i++) {
-                const price = (currentCard.price + (i * 0.40)).toFixed(2);
-                tbody.innerHTML += `<tr class="hover:bg-slate-900 transition">
-                    <td class="p-3 font-mono text-indigo-400">#${i+1}</td>
-                    <td class="p-3 font-medium text-white">${germanSellers[i]} 🇩🇪</td>
-                    <td class="p-3 text-slate-400">Near Mint</td>
-                    <td class="p-3 text-right font-semibold text-emerald-400">${price} €</td>
-                </tr>`;
-            }
-        }
-
-        function exportCSV() {
-            const csv = `data:text/csv;charset=utf-8,TCG,Name,Code,Price,Qty\n"${currentTCG}","${currentCard.name}","${currentCard.code}","${currentCard.price}","${currentCard.qty}"`;
-            const link = document.createElement("a");
-            link.href = encodeURI(csv);
-            link.download = `cardmarket_${currentTCG}.csv`;
-            link.click();
-        }
-
-        function logout() {
-            location.reload();
+                container.innerHTML += `
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow space-y-3">
+                        <div class="flex items-center space-x-4">
+                            <img src="${ver.img}" class="w-20 h-28 object-cover rounded border border-slate-700">
+                            <div>
+                                <span class="text-[10px] bg-indigo-950 text-indigo-300 px-2 py-0.5 rounded font-bold">${currentTCG}</span>
+                                <h3 class="font-bold text-white text-base mt-1">${ver.versionName}</h3>
+                                <p class="text-xs text-slate-400">Code: <span class="text-indigo-400 font-mono">${ver.code}</span></p>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-slate-950 text-slate-400 text-[10px] uppercase">
+                                    <tr>
+                                        <th class="p-2">Cardmarket Zustand</th>
+                                        <th class="p-2">Verkäufer (DE)</th>
+                                        <th class="p-2 text-right">Preis</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${condRows}</tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            });
         }
     </script>
 </body>
