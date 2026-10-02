@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cardmarket DE - Live Tracker</title>
+    <title>Cardmarket DE - Universal Scanner & Market</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -14,22 +14,21 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
-    <!-- Cardmarket Style Header -->
+    <!-- Header -->
     <header class="bg-[#101726] border-b border-[#1e293b] sticky top-0 z-50 shadow-md">
         <div class="max-w-6xl mx-auto px-4 py-2.5 flex justify-between items-center">
             <div class="flex items-center space-x-4">
                 <div class="bg-blue-600 font-black text-white px-3 py-1 rounded text-lg tracking-wider">MKT</div>
                 <div class="flex items-center space-x-2 text-xs text-slate-300">
-                    <span class="bg-blue-950 text-blue-400 border border-blue-800 px-2 py-0.5 rounded font-bold">PRODUKTE</span>
-                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-500"></i>
-                    <span>Pokémon</span>
-                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-500"></i>
-                    <span class="text-white font-semibold">Pikachu (30C 025)</span>
+                    <span class="bg-blue-950 text-blue-400 border border-blue-800 px-2 py-0.5 rounded font-bold">LIVE MARKET</span>
                 </div>
             </div>
-            <div id="user-box" class="flex items-center space-x-3 text-xs">
+            <div id="user-box" class="hidden flex items-center space-x-4 text-xs">
                 <span id="user-badge" class="text-slate-300"></span>
-                <button onclick="logout()" class="bg-slate-800 hover:bg-slate-700 px-3 py-1 rounded text-slate-300">Abmelden</button>
+                <button onclick="openCart()" class="bg-blue-600 hover:bg-blue-500 px-3 py-1.5 rounded font-bold text-white flex items-center space-x-1.5 transition">
+                    <i class="fa-solid fa-cart-shopping"></i> <span id="cart-count">0</span>
+                </button>
+                <button onclick="logout()" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded text-slate-300">Abmelden</button>
             </div>
         </div>
     </header>
@@ -39,117 +38,66 @@
         <!-- AUTH SCREEN -->
         <div id="auth-card" class="max-w-md mx-auto cm-blue border cm-border rounded-xl p-6 shadow-2xl space-y-4">
             <h2 class="text-lg font-bold text-white text-center">Cardmarket Login / Registrierung</h2>
-            <p class="text-xs text-slate-400 text-center">E-Mail, Nummer oder Social Login speichern deine Session.</p>
+            <p class="text-xs text-slate-400 text-center">Mit Google, Apple, E-Mail oder Handynummer anmelden.</p>
             <div class="grid grid-cols-2 gap-2">
                 <button onclick="authLogin('Google')" class="bg-slate-900 border cm-border p-2.5 rounded text-xs font-semibold hover:bg-slate-800"><i class="fa-brands fa-google text-red-400 mr-2"></i> Google</button>
                 <button onclick="authLogin('Apple')" class="bg-slate-900 border cm-border p-2.5 rounded text-xs font-semibold hover:bg-slate-800"><i class="fa-brands fa-apple mr-2"></i> Apple</button>
             </div>
             <input type="text" id="input-contact" placeholder="E-Mail oder Handynummer..." class="w-full bg-slate-950 border cm-border rounded p-2.5 text-xs text-white focus:outline-none focus:border-blue-500">
-            <button onclick="completeLogin()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 rounded text-xs transition">Einloggen / Code senden</button>
+            <button onclick="completeLogin()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 rounded text-xs transition">Einloggen</button>
         </div>
 
-        <!-- CARDMARKET DETAIL VIEW (1:1 Ansicht) -->
+        <!-- DASHBOARD (Suche, Scanner & Ergebnisse) -->
         <div id="dashboard-card" class="hidden space-y-6">
             
-            <!-- Suchleiste oben -->
-            <div class="cm-blue border cm-border rounded-xl p-4 flex gap-3 shadow">
-                <input type="text" id="search-input" value="Pikachu 30C 025" placeholder="Nach Karte oder Nummer suchen (z.B. 025)..." class="flex-1 bg-slate-950 border cm-border rounded p-2.5 text-xs text-white focus:outline-none focus:border-blue-500">
-                <button onclick="searchCardData()" class="bg-blue-600 hover:bg-blue-500 px-5 py-2 rounded text-xs font-bold text-white">Suchen</button>
+            <!-- Suchleiste & Scanner-Button -->
+            <div class="cm-blue border cm-border rounded-xl p-4 flex flex-col md:flex-row gap-3 shadow">
+                <div class="flex-1 flex gap-2">
+                    <input type="text" id="search-input" placeholder="Nach Karte (z.B. Pikachu, Charizard) oder Kartennummer suchen..." class="flex-1 bg-slate-950 border cm-border rounded p-2.5 text-xs text-white focus:outline-none focus:border-blue-500">
+                    <button onclick="searchCards()" class="bg-blue-600 hover:bg-blue-500 px-5 py-2 rounded text-xs font-bold text-white">Suchen</button>
+                </div>
+                <button onclick="openScanner()" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2.5 rounded text-xs font-bold text-white flex items-center justify-center space-x-2 transition shadow">
+                    <i class="fa-solid fa-camera"></i> <span>Karte Scannen</span>
+                </button>
             </div>
 
-            <!-- Hauptkarte & Info-Box (Exakt wie Cardmarket Layout) -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                
-                <!-- Linke Spalte: Bild & Titel -->
-                <div class="cm-blue border cm-border rounded-xl p-4 flex flex-col items-center text-center space-y-3">
-                    <h1 class="text-xl font-bold text-white">Pikachu (30C 025)</h1>
-                    <p class="text-xs text-slate-400">30 Jahre - Einzelkarten</p>
-                    <img src="https://images.unsplash.com/photo-1613771404784-3a5686aa2be3?w=400&auto=format&fit=crop&q=80" class="w-48 h-68 object-cover rounded border border-slate-700 shadow-lg">
-                    <span class="text-xs text-blue-400 cursor-pointer hover:underline">Support kontaktieren</span>
-                </div>
-
-                <!-- Rechte Spalte: Metadaten & Preis-Trend -->
-                <div class="md:col-span-2 cm-blue border cm-border rounded-xl p-5 flex flex-col justify-between space-y-4">
-                    <div class="grid grid-cols-2 gap-4 text-xs">
-                        <div class="space-y-2">
-                            <div class="flex justify-between border-b border-slate-800 pb-1"><span class="text-slate-400">Rarity</span> <i class="fa-solid fa-star text-amber-400"></i></div>
-                            <div class="flex justify-between border-b border-slate-800 pb-1"><span class="text-slate-400">Nummer</span> <span class="font-mono text-white">025</span></div>
-                            <div class="flex justify-between border-b border-slate-800 pb-1"><span class="text-slate-400">Erschienen in</span> <span class="text-white">30 Jahre</span></div>
-                            <div class="flex justify-between border-b border-slate-800 pb-1"><span class="text-slate-400">Verfügbare Artikel</span> <span class="text-emerald-400 font-bold">1022</span></div>
-                        </div>
-                        <div class="space-y-2 bg-slate-950/50 p-3 rounded border cm-border">
-                            <div class="flex justify-between"><span class="text-slate-400">ab</span> <span class="text-white font-bold">0,70 €</span></div>
-                            <div class="flex justify-between"><span class="text-slate-400">Preis-Trend</span> <span class="text-blue-400 font-bold">0,87 €</span></div>
-                            <div class="flex justify-between"><span class="text-slate-400">30-Tages-Durchschnitt</span> <span class="text-white">1,21 €</span></div>
-                            <div class="flex justify-between"><span class="text-slate-400">7-Tages-Durchschnitt</span> <span class="text-white">1,04 €</span></div>
-                            <div class="flex justify-between"><span class="text-slate-400">1-Tages-Durchschnitt</span> <span class="text-white">0,99 €</span></div>
-                        </div>
-                    </div>
+            <!-- SCANNER MODAL / CONTAINER -->
+            <div id="scanner-box" class="hidden cm-blue border border-emerald-500/50 rounded-xl p-5 text-center space-y-3">
+                <h3 class="font-bold text-white text-sm">📸 TCG Scanner (Kamera / Bild-Upload)</h3>
+                <p class="text-xs text-slate-400">Halte eine Karte vor die Kamera oder lade ein Foto hoch, um sie automatisch zu erkennen.</p>
+                <div class="border-2 border-dashed cm-border rounded-lg p-6 flex flex-col items-center justify-center space-y-2 bg-slate-950/40">
+                    <i class="fa-solid fa-cloud-arrow-up text-2xl text-blue-400"></i>
+                    <span class="text-xs text-slate-300">Foto hierher ziehen oder Test-Scan starten</span>
+                    <button onclick="simulateScan()" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded text-xs font-bold text-white mt-2">Pikachu Test-Scan ausführen</button>
                 </div>
             </div>
 
-            <!-- Angebote / Verkäufer Tabelle (1:1 wie Cardmarket unten) -->
-            <div class="cm-blue border cm-border rounded-xl overflow-hidden shadow">
-                <div class="bg-slate-900 p-3 border-b cm-border flex justify-between items-center text-xs font-bold">
-                    <span>Verfügbare Angebote (Deutschland 🇩🇪)</span>
-                    <span class="text-slate-400">Filter: Zustand & Verkäuferstatus</span>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-950 text-slate-400 uppercase text-[10px]">
-                            <tr>
-                                <th class="p-3">Verkäufer</th>
-                                <th class="p-3">Zustand & Extras</th>
-                                <th class="p-3 text-right">Preis</th>
-                                <th class="p-3 text-center">Anzahl</th>
-                                <th class="p-3 text-center">Kaufen</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-800">
-                            <tr class="hover:bg-slate-900/50 transition">
-                                <td class="p-3 flex items-center space-x-2 font-semibold text-slate-200">
-                                    <span>🇩🇪</span> <span>Simonrad</span> <span class="text-[10px] bg-amber-500/20 text-amber-400 px-1 rounded">PowerSeller</span>
-                                </td>
-                                <td class="p-3"><span class="bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-bold text-[10px]">NM</span> <span class="text-slate-400 ml-1">Booster Fresh</span></td>
-                                <td class="p-3 text-right font-bold text-emerald-400">0,70 €</td>
-                                <td class="p-3 text-center">1</td>
-                                <td class="p-3 text-center"><button class="bg-slate-800 hover:bg-blue-600 px-2.5 py-1 rounded text-white transition"><i class="fa-solid fa-cart-shopping"></i></button></td>
-                            </tr>
-                            <tr class="hover:bg-slate-900/50 transition">
-                                <td class="p-3 flex items-center space-x-2 font-semibold text-slate-200">
-                                    <span>🇩🇪</span> <span>Zanki2018</span> <span class="text-[10px] bg-blue-950 text-blue-400 px-1 rounded">Gewerblich</span>
-                                </td>
-                                <td class="p-3"><span class="bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-bold text-[10px]">NM</span></td>
-                                <td class="p-3 text-right font-bold text-emerald-400">0,72 €</td>
-                                <td class="p-3 text-center">1</td>
-                                <td class="p-3 text-center"><button class="bg-slate-800 hover:bg-blue-600 px-2.5 py-1 rounded text-white transition"><i class="fa-solid fa-cart-shopping"></i></button></td>
-                            </tr>
-                            <tr class="hover:bg-slate-900/50 transition">
-                                <td class="p-3 flex items-center space-x-2 font-semibold text-slate-200">
-                                    <span>🇩🇪</span> <span>CologneVault</span>
-                                </td>
-                                <td class="p-3"><span class="bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-bold text-[10px]">NM</span> <span class="text-slate-400 ml-1">Foil</span></td>
-                                <td class="p-3 text-right font-bold text-emerald-400">0,75 €</td>
-                                <td class="p-3 text-center">1</td>
-                                <td class="p-3 text-center"><button class="bg-slate-800 hover:bg-blue-600 px-2.5 py-1 rounded text-white transition"><i class="fa-solid fa-cart-shopping"></i></button></td>
-                            </tr>
-                            <tr class="hover:bg-slate-900/50 transition">
-                                <td class="p-3 flex items-center space-x-2 font-semibold text-slate-200">
-                                    <span>🇩🇪</span> <span>Ankor77777</span>
-                                </td>
-                                <td class="p-3"><span class="bg-amber-950 text-amber-400 border border-amber-800 px-2 py-0.5 rounded font-bold text-[10px]">EX</span></td>
-                                <td class="p-3 text-right font-bold text-emerald-400">0,80 €</td>
-                                <td class="p-3 text-center">2</td>
-                                <td class="p-3 text-center"><button class="bg-slate-800 hover:bg-blue-600 px-2.5 py-1 rounded text-white transition"><i class="fa-solid fa-cart-shopping"></i></button></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <!-- DYNAMISCHE ERGEBNISSE -->
+            <div id="results-area" class="space-y-6">
+                <div class="text-center text-slate-500 py-10 text-xs">Gib einen Suchbegriff ein oder nutze den Scanner, um Karten und Live-Angebote zu laden.</div>
             </div>
 
         </div>
 
     </main>
+
+    <!-- WARENKORB MODAL -->
+    <div id="cart-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+        <div class="cm-blue border cm-border rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b cm-border pb-3">
+                <h3 class="font-bold text-white text-base"><i class="fa-solid fa-cart-shopping text-blue-400 mr-2"></i> Dein Warenkorb</h3>
+                <button onclick="closeCart()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div id="cart-items" class="space-y-2 max-h-60 overflow-y-auto text-xs">
+                <p class="text-slate-400 text-center py-4">Dein Warenkorb ist leer.</p>
+            </div>
+            <div class="border-t cm-border pt-3 flex justify-between items-center text-sm font-bold">
+                <span>Gesamt:</span>
+                <span id="cart-total" class="text-emerald-400">0,00 €</span>
+            </div>
+            <button onclick="alert('Checkout erfolgreich! Bestellung an Cardmarket Händler übermittelt.')" class="w-full bg-emerald-600 hover:bg-emerald-500 py-2.5 rounded text-xs font-bold text-white transition">Zur Kasse / Kaufen</button>
+        </div>
+    </div>
 
     <footer class="text-center p-4 text-xs text-slate-500 border-t cm-border">
         Cardmarket DE Replica &copy; 2026 - MultiTCGMarket
@@ -157,6 +105,58 @@
 
     <script>
         let currentUser = null;
+        let cart = [];
+
+        // Datenbank mit mehreren Karten und verschiedenen Versionen
+        const tcgDatabase = [
+            {
+                name: "Pikachu",
+                set: "30 Jahre",
+                number: "025",
+                rarity: "Holofoil",
+                versions: [
+                    {
+                        versionName: "Standard Holo (30C 025)",
+                        img: "https://images.unsplash.com/photo-1613771404784-3a5686aa2be3?w=400&auto=format&fit=crop&q=80",
+                        trend: "0,87 €",
+                        avail: "1022",
+                        offers: [
+                            { seller: "Simonrad", state: "NM", price: 0.70, count: 1 },
+                            { seller: "Zanki2018", state: "NM", price: 0.72, count: 1 },
+                            { seller: "Ankor77777", state: "EX", price: 0.80, count: 2 }
+                        ]
+                    },
+                    {
+                        versionName: "Full Art Secret Rare",
+                        img: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=400&auto=format&fit=crop&q=80",
+                        trend: "45,00 €",
+                        avail: "148",
+                        offers: [
+                            { seller: "BerlinCards", state: "NM", price: 42.00, count: 1 },
+                            { seller: "RheinMainTCG", state: "EX", price: 35.50, count: 1 }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "Charizard",
+                set: "Obsidian Flames",
+                number: "223",
+                rarity: "Special Illustration Rare",
+                versions: [
+                    {
+                        versionName: "Alt Art Secret Rare",
+                        img: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=400&auto=format&fit=crop&q=80",
+                        trend: "52,50 €",
+                        avail: "310",
+                        offers: [
+                            { seller: "EliteCards_DE", state: "NM", price: 49.00, count: 1 },
+                            { seller: "StuttgartTCG", state: "GD", price: 38.00, count: 2 }
+                        ]
+                    }
+                ]
+            }
+        ];
 
         window.addEventListener('load', () => {
             const saved = localStorage.getItem('cm_user');
@@ -185,7 +185,8 @@
         function showDashboard() {
             document.getElementById('auth-card').classList.add('hidden');
             document.getElementById('dashboard-card').classList.remove('hidden');
-            document.getElementById('user-badge').innerText = `Eingeloggt als: ${currentUser.contact}`;
+            document.getElementById('user-box').classList.remove('hidden');
+            document.getElementById('user-badge').innerText = `Eingeloggt: ${currentUser.contact}`;
         }
 
         function logout() {
@@ -193,9 +194,115 @@
             location.reload();
         }
 
-        function searchCardData() {
-            const q = document.getElementById('search-input').value;
-            alert(`Suche nach Versionen und Live-Preisen für: ${q}`);
+        function openScanner() {
+            const box = document.getElementById('scanner-box');
+            box.classList.toggle('hidden');
+        }
+
+        function simulateScan() {
+            document.getElementById('search-input').value = 'Pikachu';
+            document.getElementById('scanner-box').classList.add('hidden');
+            searchCards();
+        }
+
+        function searchCards() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            const resultsArea = document.getElementById('results-area');
+            resultsArea.innerHTML = '';
+
+            const found = tcgDatabase.filter(c => c.name.toLowerCase().includes(query) || c.number.includes(query));
+
+            if(found.length === 0) {
+                resultsArea.innerHTML = `<div class="cm-blue border cm-border rounded-xl p-8 text-center text-slate-400 text-xs">Keine Karten gefunden für "${query}". Versuche "Pikachu" oder "Charizard".</div>`;
+                return;
+            }
+
+            found.forEach(card => {
+                let versionsHtml = '';
+                card.versions.forEach(ver => {
+                    let offersHtml = ver.offers.map(o => `
+                        <tr class="hover:bg-slate-900/50 transition">
+                            <td class="p-2.5 flex items-center space-x-2 font-semibold text-slate-200">
+                                <span>🇩🇪</span> <span>${o.seller}</span>
+                            </td>
+                            <td class="p-2.5"><span class="bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-bold text-[10px]">${o.state}</span></td>
+                            <td class="p-2.5 text-right font-bold text-emerald-400">${o.price.toFixed(2)} €</td>
+                            <td class="p-2.5 text-center">${o.count}</td>
+                            <td class="p-2.5 text-center">
+                                <button onclick="addToCart('${card.name} (${ver.versionName})', ${o.price}, '${o.seller}')" class="bg-blue-600 hover:bg-blue-500 px-2.5 py-1 rounded text-white text-xs transition shadow">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+
+                    versionsHtml += `
+                        <div class="cm-blue border cm-border rounded-xl p-4 space-y-3">
+                            <div class="flex flex-col md:flex-row items-center gap-4">
+                                <img src="${ver.img}" class="w-32 h-44 object-cover rounded border border-slate-700 shadow">
+                                <div class="flex-1 space-y-2 w-full">
+                                    <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-800 px-2 py-0.5 rounded font-bold">Set: ${card.set}</span>
+                                    <h3 class="text-base font-bold text-white">${ver.versionName}</h3>
+                                    <div class="grid grid-cols-2 gap-2 text-xs bg-slate-950/40 p-2.5 rounded border cm-border">
+                                        <div><span class="text-slate-400">Preis-Trend:</span> <strong class="text-blue-400">${ver.trend}</strong></div>
+                                        <div><span class="text-slate-400">Verfügbar:</span> <strong class="text-emerald-400">${ver.avail}</strong></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs">
+                                    <thead class="bg-slate-950 text-slate-400 uppercase text-[10px]">
+                                        <tr>
+                                            <th class="p-2.5">Verkäufer</th>
+                                            <th class="p-2.5">Zustand</th>
+                                            <th class="p-2.5 text-right">Preis</th>
+                                            <th class="p-2.5 text-center">Anzahl</th>
+                                            <th class="p-2.5 text-center">Kaufen</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-800">${offersHtml}</tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                });
+                resultsArea.innerHTML += versionsHtml;
+            });
+        }
+
+        function addToCart(itemName, price, seller) {
+            cart.push({ itemName, price, seller });
+            document.getElementById('cart-count').innerText = cart.length;
+            alert(`${itemName} von ${seller} wurde zum Warenkorb hinzugefügt!`);
+        }
+
+        function openCart() {
+            const container = document.getElementById('cart-items');
+            container.innerHTML = '';
+            if(cart.length === 0) {
+                container.innerHTML = '<p class="text-slate-400 text-center py-4">Dein Warenkorb ist leer.</p>';
+                document.getElementById('cart-total').innerText = '0,00 €';
+            } else {
+                let total = 0;
+                cart.forEach((item, idx) => {
+                    total += item.price;
+                    container.innerHTML += `
+                        <div class="flex justify-between items-center bg-slate-950 p-2 rounded border cm-border">
+                            <div>
+                                <strong class="text-white">${item.itemName}</strong>
+                                <div class="text-[10px] text-slate-400">Händler: ${item.seller}</div>
+                            </div>
+                            <div class="text-emerald-400 font-bold">${item.price.toFixed(2)} €</div>
+                        </div>
+                    `;
+                });
+                document.getElementById('cart-total').innerText = total.toFixed(2) + ' €';
+            }
+            document.getElementById('cart-modal').classList.remove('hidden');
+        }
+
+        function closeCart() {
+            document.getElementById('cart-modal').classList.add('hidden');
         }
     </script>
 </body>
