@@ -3,99 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate TCG Preisübersicht (Alle Monster & Charaktere)</title>
+    <title>MultiTCGMarket - Preisübersicht</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px; color: #333; }
-        header { text-align: center; margin-bottom: 20px; }
-        h1 { color: #2c3e50; }
-        .nav-tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
-        .tab-btn { padding: 10px 20px; font-size: 16px; cursor: pointer; border: none; background-color: #ddd; border-radius: 5px; transition: background 0.3s; }
-        .tab-btn.active { background-color: #3498db; color: white; font-weight: bold; }
-        .search-container { text-align: center; margin-bottom: 20px; }
-        input[type="text"] { width: 50%; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; max-width: 1300px; margin: 0 auto; }
-        .card { background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); padding: 15px; text-align: center; }
-        .card h3 { margin: 10px 0 5px; font-size: 16px; color: #2c3e50; }
-        .card p { color: #7f8c8d; font-size: 13px; margin: 5px 0; }
-        .price { font-size: 16px; color: #27ae60; font-weight: bold; margin-top: 10px; }
-        .badge { display: inline-block; padding: 3px 8px; font-size: 11px; background: #e1f5fe; color: #0288d1; border-radius: 4px; }
-        #loading { text-align: center; font-size: 18px; margin-top: 40px; color: #e67e22; }
+        body { 
+            font-family: Arial, sans-serif; 
+            background: linear-gradient(135deg, #1e1e2f, #2a2a40); 
+            color: #fff;
+            margin: 0; 
+            padding: 20px; 
+        }
+
+        /* Coole Intro-Animation für MultiTCGMarket */
+        header { 
+            text-align: center; 
+            margin: 40px 0; 
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            background: linear-gradient(45deg, #00dbde, #fc00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            animation: fadeInScale 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            opacity: 0;
+            transform: scale(0.5);
+        }
+
+        header p {
+            color: #a0a0c0;
+            font-size: 1.1rem;
+            margin-top: 10px;
+            animation: fadeInText 1.5s ease-out 0.5s forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeInScale {
+            0% { opacity: 0; transform: scale(0.3) translateY(-30px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); text-shadow: 0 10px 30px rgba(0,219,222,0.4); }
+        }
+
+        @keyframes fadeInText {
+            to { opacity: 1; }
+        }
+
+        .nav-tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; }
+        .tab-btn { 
+            padding: 12px 25px; 
+            font-size: 16px; 
+            cursor: pointer; 
+            border: none; 
+            background-color: #3b3b58; 
+            color: #fff;
+            border-radius: 8px; 
+            transition: all 0.3s ease; 
+        }
+        .tab-btn:hover { background-color: #4e4e7c; transform: translateY(-2px); }
+        .tab-btn.active { background: linear-gradient(45deg, #00dbde, #fc00ff); color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(0,219,222,0.3); }
+
+        .search-container { text-align: center; margin-bottom: 30px; }
+        input[type="text"] { 
+            width: 50%; 
+            padding: 14px 20px; 
+            font-size: 16px; 
+            border: 2px solid #3b3b58; 
+            background-color: #151522;
+            color: #fff;
+            border-radius: 8px; 
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus { border-color: #00dbde; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; max-width: 1300px; margin: 0 auto; }
+        .card { 
+            background: #242438; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+            padding: 15px; 
+            border: 1px solid #33334d;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .card:hover { transform: translateY(-5px); border-color: #00dbde; }
+        .card h3 { margin: 5px 0 2px; font-size: 18px; color: #fff; }
+        .sub-text { color: #a0a0c0; font-size: 12px; margin-bottom: 12px; }
+        
+        .version-box {
+            background: #1c1c2b;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 8px;
+            border: 1px solid #2f2f45;
+        }
+        .version-title { font-size: 13px; color: #00dbde; font-weight: bold; margin-bottom: 5px; }
+        .price-info { display: flex; justify-content: space-between; font-size: 13px; margin-top: 5px; }
+        .trend-price { color: #00ffcc; font-weight: bold; }
+        .avail { color: #999; }
+        
+        #loading { text-align: center; font-size: 18px; margin-top: 40px; color: #00dbde; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>TCG Universum Preis-Tracker</h1>
-    <p>Komplette Datenbank aller Pokémon, One Piece Charaktere und Yu-Gi-Oh! Monster (Ohne Login / Ohne Kauf)</p>
+    <h1>MultiTCGMarket</h1>
+    <p>Cardmarket-Style Preisübersicht (Kein Login, Keine Kaufoption)</p>
 </header>
 
 <div class="nav-tabs">
-    <button class="tab-btn active" onclick="switchCategory('pokemon', this)">Pokémon (Alle)</button>
-    <button class="tab-btn" onclick="switchCategory('yugioh', this)">Yu-Gi-Oh! (Alle Monster)</button>
-    <button class="tab-btn" onclick="switchCategory('onepiece', this)">One Piece (Alle Charaktere)</button>
+    <button class="tab-btn active" onclick="switchCategory('pokemon', this)">Pokémon</button>
+    <button class="tab-btn" onclick="switchCategory('onepiece', this)">One Piece</button>
+    <button class="tab-btn" onclick="switchCategory('yugioh', this)">Yu-Gi-Oh!</button>
 </div>
 
 <div class="search-container">
-    <input type="text" id="searchInput" oninput="filterCards()" placeholder="Durchsuche tausende Einträge...">
+    <input type="text" id="searchInput" oninput="filterCards()" placeholder="Nach Name, Set oder Nummer suchen...">
 </div>
 
-<div id="loading">Lade gigantische Datenbank... Bitte einen Moment Geduld.</div>
+<div id="loading">Lade Preisdaten aus cards.json...</div>
 <div id="card-container" class="grid"></div>
 
 <script>
-    let masterData = { pokemon: [], yugioh: [], onepiece: [] };
+    let allData = {};
     let currentCategory = 'pokemon';
 
-    async function loadAllDatabases() {
-        try {
-            // 1. Pokémon von der offiziellen PokeAPI laden (alle 1025+ Pokémon)
-            let pokeRes = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1025');
-            let pokeData = await pokeRes.json();
-            masterData.pokemon = pokeData.results.map((p, index) => ({
-                name: p.name.charAt(0).toUpperCase() + p.name.slice(1),
-                details: `National Dex #${index + 1}`,
-                price: `Ø ${(Math.random() * 50 + 1).toFixed(2)} €`
-            }));
-
-            // 2. Yu-Gi-Oh! Monster von der YGOPRODeck API laden (alle Monster)
-            let ygoRes = await fetch('https://db.ygoprodeck.com/api/v7/cardinfo.cgi?type=Normal Monster,Effect Monster,Ritual Monster,Fusion Monster,Synchro Monster,XYZ Monster,Pendel Monster,Link Monster');
-            let ygoData = await ygoRes.json();
-            masterData.yugioh = ygoData.data.map(card => ({
-                name: card.name,
-                details: `${card.type} / ATK: ${card.atk || 0}`,
-                price: `Ø ${(Math.random() * 30 + 0.5).toFixed(2)} €`
-            }));
-
-            // 3. One Piece (Umfangreiche Basis aller wichtigen Charaktere & Decks)
-            masterData.onepiece = [
-                { name: "Monkey D. Luffy", details: "Strohhut-Bande / Kapitän", price: "Ø 25,00 €" },
-                { name: "Roronoa Zoro", details: "Strohhut-Bande / Kämpfer", price: "Ø 18,50 €" },
-                { name: "Nami", details: "Strohhut-Bande / Navigatorin", price: "Ø 12,00 €" },
-                { name: "Usopp", details: "Strohhut-Bande / Schütze", price: "Ø 8,50 €" },
-                { name: "Sanji", details: "Strohhut-Bande / Koch", price: "Ø 15.00 €" },
-                { name: "Tonytony Chopper", details: "Strohhut-Bande / Arzt", price: "Ø 10,00 €" },
-                { name: "Nico Robin", details: "Strohhut-Bande / Archäologin", price: "Ø 14,00 €" },
-                { name: "Franky", details: "Strohhut-Bande / Schiffszimmermann", price: "Ø 9,00 €" },
-                { name: "Brook", details: "Strohhut-Bande / Musiker", price: "Ø 9,50 €" },
-                { name: "Jinbe", details: "Strohhut-Bande / Steuermann", price: "Ø 16,00 €" },
-                // ... (Hier kannst du unendlich viele One Piece Charaktere im Array fortführen)
-            ];
-            // Generische Erweiterung für One Piece Platzhalter, falls gewünscht
-            for(let i = 1; i <= 500; i++) {
-                masterData.onepiece.push({
-                    name: `One Piece Charakter #${i}`,
-                    details: `Grand Line / Pirat / Marine`,
-                    price: `Ø ${(Math.random() * 20 + 2).toFixed(2)} €`
-                });
-            }
-
+    // Daten aus der lokalen cards.json laden
+    fetch('cards.json')
+        .then(response => {
+            if (!response.ok) throw new Error("Netzwerkfehler beim Laden der JSON");
+            return response.json();
+        })
+        .then(data => {
+            allData = data;
             document.getElementById('loading').style.display = 'none';
             renderCards(currentCategory);
-        } catch (e) {
-            document.getElementById('loadinginnerText = "Fehler beim Laden der Live-Daten.";';
-            console.error(e);
-        }
-    }
+        })
+        .catch(error => {
+            document.getElementById('loading').innerHTML = "Fehler: Konnte cards.json nicht laden.<br><small>Bitte starte die Seite über einen lokalen Server (z.B. VS Code Live Server oder Python HTTP Server), da Browser den direkten Dateizugriff blockieren.</small>";
+            console.error(error);
+        });
 
     function switchCategory(category, btn) {
         currentCategory = category;
@@ -107,50 +153,52 @@
     function renderCards(category) {
         const container = document.getElementById('card-container');
         container.innerHTML = '';
-        
-        let data = masterData[category];
-        // Performance-Schutz: Zeige initial die ersten 200 an, Rest filtert die Suche dynamisch
-        let displayLimit = 200; 
-        let chunk = data.slice(0, displayLimit);
 
-        chunk.forEach(item => {
+        if (!allData[category]) return;
+
+        allData[category].forEach(item => {
             const card = document.createElement('div');
             card.className = 'card';
-            card.setAttribute('data-name', item.name.toLowerCase());
+            card.setAttribute('data-search', (item.name + ' ' + item.set + ' ' + item.number).toLowerCase());
+
+            let versionsHtml = '';
+            if (item.versions && item.versions.length > 0) {
+                item.versions.forEach(v => {
+                    versionsHtml += `
+                        <div class="version-box">
+                            <div class="version-title">${v.versionName}</div>
+                            <div class="price-info">
+                                <span>Trend: <span class="trend-price">${v.trend}</span></span>
+                                <span class="avail">Verfügbar: ${v.avail}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
             card.innerHTML = `
-                <span class="badge">${category.toUpperCase()}</span>
                 <h3>${item.name}</h3>
-                <p>${item.details}</p>
-                <div class="price">${item.price}</div>
+                <div class="sub-text">${item.set} • #${item.number}</div>
+                ${versionsHtml}
             `;
             container.appendChild(card);
         });
+        filterCards();
     }
 
     function filterCards() {
-        let input = document.getElementById('searchInput'].value.toLowerCase();
-        let container = document.getElementById('card-container');
-        container.innerHTML = '';
+        let input = document.getElementById('searchInput').value.toLowerCase();
+        let cards = document.getElementsByClassName('card');
 
-        let data = masterData[currentCategory];
-        let matches = data.filter(item => item.name.toLowerCase().includes(input));
-
-        // Maximal 150 Treffer gleichzeitig rendern für blitzschnelle Performance ohne Lag
-        matches.slice(0, 150).forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
-                <span class="badge">${currentCategory.toUpperCase()}</span>
-                <h3>${item.name}</h3>
-                <p>${item.details}</p>
-                <div class="price">${item.price}</div>
-            `;
-            container.appendChild(card);
-        });
+        for (let i = 0; i < cards.length; i++) {
+            let searchText = cards[i].getAttribute('data-search');
+            if (searchText.includes(input)) {
+                cards[i].style.display = "";
+            } else {
+                cards[i].style.display = "none";
+            }
+        }
     }
-
-    // Starten beim Laden
-    loadAllDatabases();
 </script>
 
 </body>
